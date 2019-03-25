@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MapView from 'react-native-maps';
+import MapView from 'react-native-maps'
+import { FlatList } from 'react-native'
 
 
 export default class App extends Component {
@@ -12,10 +13,14 @@ export default class App extends Component {
       ({ coords: {latitude, longitude }}) => {
         this.setState({region: { latitude,
            longitude,
-           latitudeDelta: 0.0055,
-          longitudeDelta: 0.0055, }})
-      }, //sucesso
+           latitudeDelta: 0.0005,
+          longitudeDelta: 0.0005,
+          forecast: [],
+          error:'' }})
+        }, //sucesso
+      (error) => this.setState({ forecast: error.message }),
       () => {}, //erro
+      () => { this.getWeather(); },
       {
         timeout: 2000,
         enableHighAccuracy: true,
@@ -23,6 +28,17 @@ export default class App extends Component {
       }
     )
   }
+  getWeather(){
+		let url = 'https://samples.openweathermap.org/data/2.5/forecast?q=M%C3%BCnchen,DE&appid=b6907d289e10d714a6e88b30761fae22'
+
+		fetch(url)
+		.then(response => response.json())
+		.then(data => {
+			this.setState((prevState, props) => ({
+				forecast: data
+			}));
+		})
+	}
   render() {
 
     const {region} = this.state
@@ -35,8 +51,11 @@ export default class App extends Component {
         showsUserLocation
         loadingEnabled
         />
-        </View>
+        </View>   
     );
+    <FlatList data={this.state.forecast.list} style={{marginTop:20}} 
+      keyExtractor={item => item.dt_txt} renderItem={({item}) =>
+     <ForecastCard detail={item} location={this.state.forecast.city.name} />} />
   }
 }
 
