@@ -13,8 +13,8 @@ export default class App extends Component {
       ({ coords: {latitude, longitude }}) => {
         this.setState({region: { latitude,
            longitude,
-           latitudeDelta: 0.0005,
-          longitudeDelta: 0.0005,
+           longitudeDelta: 0.042, 
+           latitudeDelta: 0.0922,
           forecast: [],
           error:'' }})
         }, //sucesso
@@ -29,7 +29,7 @@ export default class App extends Component {
     )
   }
   getWeather(){
-		let url = 'https://samples.openweathermap.org/data/2.5/forecast?q=M%C3%BCnchen,DE&appid=b6907d289e10d714a6e88b30761fae22'
+		let url =  '/api/location/search/?lattlong=(-23.26),(-47.2996733)'
 
 		fetch(url)
 		.then(response => response.json())
@@ -41,6 +41,7 @@ export default class App extends Component {
 	}
   render() {
 
+    const { getWeather} = this.state 
     const {region} = this.state
     return (
       <View style={styles.container}>
